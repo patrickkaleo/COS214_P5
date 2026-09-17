@@ -1,0 +1,4 @@
+#ifndef MITIGATIONSTATE_H
+#define MITIGATIONSTATE_H
+
+#endif

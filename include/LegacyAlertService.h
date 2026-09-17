@@ -1,0 +1,4 @@
+#ifndef LEGACYALERTSERVICE_H
+#define LEGACYALERTSERVICE_H
+
+#endif

@@ -1,0 +1,4 @@
+#ifndef RESTRICTEDSTATE_H
+#define RESTRICTEDSTATE_H
+
+#endif

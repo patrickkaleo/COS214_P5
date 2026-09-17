@@ -1,0 +1,4 @@
+#ifndef COMMUNICATIONSTEAM_H
+#define COMMUNICATIONSTEAM_H
+
+#endif

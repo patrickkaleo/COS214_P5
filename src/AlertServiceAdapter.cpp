@@ -1,0 +1,1 @@
+#include "AlertServiceAdapter.h"

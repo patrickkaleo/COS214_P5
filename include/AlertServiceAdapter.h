@@ -1,0 +1,4 @@
+#ifndef ALERTSERVICEADAPTER_H
+#define ALERTSERVICEADAPTER_H
+
+#endif

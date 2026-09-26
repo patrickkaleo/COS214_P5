@@ -4,30 +4,32 @@
 #include <vector>
 #include <string>
 
-#include "AccessState.h"
-#include "ResponseUnit.h"
-#include "Incident.h"
+class AccessState;
+class ResponseUnit;
+class Incident;
 
-using namespace std;
+class CampusArea
+{
+protected:
+    std::vector<ResponseUnit*> responders;
+    std::vector<Incident*> incidents;
 
-class CampusArea{
-    protected:
-        
-        vector<ResponseUnit*> responders;
-        vector<Incident*> incidents;
+    AccessState* state;
+    std::string id;
 
-        AccessState* state;
-        string id;
+public:
+    explicit CampusArea(std::string id);
+    virtual ~CampusArea();
 
-        CampusArea();
-    public:
-        ~CampusArea();
+    virtual void add(CampusArea* area);
+    virtual void display(std::string indent = "");
+    virtual void updateState(AccessState* newState);
 
-        void add(CampusArea* area);
-        virtual void display(string indent);
-        void updateState(AccessState* newState);
-        void addResponseUnit(ResponseUnit* unit);
-        void addResponseUnit(Incident* incident);
+    void addResponseUnit(ResponseUnit* unit);
+    void addIncident(Incident* incident);
+
+    std::string getId() const;
+    std::string getStateDescription() const;
 };
 
 #endif

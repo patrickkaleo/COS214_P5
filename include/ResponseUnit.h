@@ -1,18 +1,27 @@
 #ifndef RESPONSEUNIT_H
 #define RESPONSEUNIT_H
 
-#include "TeamCoordinator.h"
+#include <string>
 
-class ResponseUnit{
-    private:
-        TeamCoordinator* mediator;
-        string id;
-    protected:
-        ResponseUnit();
-    public:
-        ~ResponseUnit();
-        void respond(CampusArea* area);
-        
+class TeamCoordinator;
+class CampusArea;
+
+class ResponseUnit
+{
+private:
+    TeamCoordinator* mediator;
+    std::string id;
+
+protected:
+    explicit ResponseUnit(std::string id);
+
+public:
+    virtual ~ResponseUnit();
+
+    void setMediator(TeamCoordinator* mediator);
+    virtual void respond(CampusArea* area);
+
+    std::string getId() const;
 };
 
 #endif

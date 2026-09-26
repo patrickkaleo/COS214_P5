@@ -4,9 +4,9 @@
 
 #include <iostream>
 
-RestrictedState::RestrictedState(CampusArea* context)
-    : AccessState(context)
+RestrictedState::RestrictedState(CampusArea *context)
 {
+    this->context = context;
 }
 
 RestrictedState::~RestrictedState()
@@ -23,8 +23,9 @@ void RestrictedState::updateState()
     std::cout
         << "[Access State] RESTRICTED -> LOCKED"
         << std::endl;
-
-    context->updateState(
-        new LockedState(context)
-    );
+    if (this->context)
+    {
+        this->context->updateState(
+            new LockedState(context));
+    }
 }

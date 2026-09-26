@@ -4,9 +4,9 @@
 
 #include <iostream>
 
-LockedState::LockedState(CampusArea* context)
-    : AccessState(context)
+LockedState::LockedState(CampusArea *context)
 {
+	this->context = context;
 }
 
 LockedState::~LockedState()
@@ -15,16 +15,16 @@ LockedState::~LockedState()
 
 std::string LockedState::describe()
 {
-    return "LOCKED";
+	return "LOCKED";
 }
 
 void LockedState::updateState()
 {
-    std::cout
-        << "[Access State] LOCKED -> OPEN"
-        << std::endl;
-
-    context->updateState(
-        new OpenState(context)
-    );
+	std::cout
+		<< "[Access State] LOCKED -> OPEN"
+		<< std::endl;
+	if (this->context)
+	{
+		context->updateState(new OpenState(this->context));
+	}
 }

@@ -4,9 +4,9 @@
 
 #include <iostream>
 
-OpenState::OpenState(CampusArea* context)
-    : AccessState(context)
+OpenState::OpenState(CampusArea *context)
 {
+	this->context = context;
 }
 
 OpenState::~OpenState()
@@ -15,16 +15,18 @@ OpenState::~OpenState()
 
 std::string OpenState::describe()
 {
-    return "OPEN";
+	return "OPEN";
 }
 
 void OpenState::updateState()
 {
-    std::cout
-        << "[Access State] OPEN -> RESTRICTED"
-        << std::endl;
+	std::cout
+		<< "[Access State] OPEN -> RESTRICTED"
+		<< std::endl;
 
-    context->updateState(
-        new RestrictedState(context)
-    );
+	if (this->context)
+	{
+		this->context->updateState(
+			new RestrictedState(context));
+	}
 }

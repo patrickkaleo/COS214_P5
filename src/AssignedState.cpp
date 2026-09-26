@@ -20,16 +20,6 @@ std::string AssignedState::describe()
 
 void AssignedState::updateState()
 {
-    if (!context->areaHasPersonnel())
-    {
-        std::cout
-            << "[Incident State] INVALID: "
-            << "cannot mitigate. No personnel at the incident area."
-            << std::endl;
-
-        return;
-    }
-
     std::cout
         << "[Incident State] ASSIGNED -> MITIGATION"
         << std::endl;

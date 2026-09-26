@@ -4,62 +4,59 @@
 #include "CampusArea.h"
 
 Incident::Incident(std::string description)
-    : state(new NewState(this)),
-      description(description),
-      area(nullptr)
+	: state(new NewState(this)),
+	  description(description),
+	  area(nullptr)
 {
 }
 
 Incident::~Incident()
 {
-    delete state;
+	if (this->state)
+	{
+		delete state;
+		if (this->area != nullptr)
+		{
+			this->area = nullptr;
+		}
+	}
 }
 
-void Incident::updateState(IncidentState* newState)
+void Incident::updateState(IncidentState *newState)
 {
-    if (newState == nullptr)
-    {
-        return;
-    }
-
-    IncidentState* oldState = state;
-
-    state = newState;
-
-    delete oldState;
+	if (newState != nullptr)
+	{
+		IncidentState *oldState = state;
+		state = newState;
+		delete oldState;
+	}
 }
 
 void Incident::progress()
 {
-    if (state != nullptr)
-    {
-        state->updateState();
-    }
+	if (state != nullptr)
+	{
+		state->updateState();
+	}
 }
 
-void Incident::setArea(CampusArea* area)
+void Incident::setArea(CampusArea *area)
 {
-    this->area = area;
+	this->area = area;
+}
+
+CampusArea *Incident::getArea() const
+{
+	return area;
 }
 
 bool Incident::areaHasPersonnel() const
 {
-    if (area == nullptr)
-    {
-        return false;
-    }
-
-    return area->hasPersonnel();
+	if (this->area)
+		return area->hasPersonnel();
 }
 
 std::string Incident::describe()
 {
-    std::string currentState = "UNKNOWN";
-
-    if (state != nullptr)
-    {
-        currentState = state->describe();
-    }
-
-    return description + " [" + currentState + "]";
+	return (this->description + " [" + (this->state ? this->state->describe() : "UNKNOWN")) + "]";
 }

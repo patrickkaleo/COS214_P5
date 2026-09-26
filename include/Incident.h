@@ -21,6 +21,7 @@ public:
     void progress();
     void setArea(CampusArea* area);
 
+    CampusArea* getArea() const;
     bool areaHasPersonnel() const;
     std::string describe();
 };

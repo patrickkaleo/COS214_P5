@@ -2,10 +2,12 @@
 #define FACILITIESSTAFF_H
 
 #include "ResponseUnit.h"
+#include <string>
 
-class FacilitiesStaff:public ResponseUnit{
-    public:
-        FacilitiesStaff(string id);
+class FacilitiesStaff : public ResponseUnit
+{
+public:
+    explicit FacilitiesStaff(std::string id);
 };
 
 #endif

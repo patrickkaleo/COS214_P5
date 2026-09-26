@@ -2,13 +2,16 @@
 #define RESOLVEDSTATE_H
 
 #include "IncidentState.h"
+#include <string>
 
-class ResolvedState:public IncidentState{
-    public:
-        ResolvedState(Incident* context);
-        ~ResolvedState();
-        string describe();
-        void updateState();
+class ResolvedState : public IncidentState
+{
+public:
+    explicit ResolvedState(Incident* context);
+    ~ResolvedState();
+
+    void updateState();
+    std::string describe();
 };
 
 #endif

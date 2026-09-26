@@ -1,20 +1,22 @@
 #ifndef ACCESSSTATE_H
 #define ACCESSSTATE_H
 
-
 #include <string>
 
-#include "CampusArea.h"
-#include "Incident.h"
+class CampusArea;
 
-class AccessState{
-    protected:
-        CampusArea* context;
-        AccessState();
-    public:
-        virtual ~AccessState();
-        virtual void updateState() = 0;
-        virtual string describe() = 0;
+class AccessState
+{
+protected:
+    CampusArea* context;
+
+    explicit AccessState(CampusArea* context);
+
+public:
+    virtual ~AccessState();
+
+    virtual void updateState() = 0;
+    virtual std::string describe() = 0;
 };
 
 #endif

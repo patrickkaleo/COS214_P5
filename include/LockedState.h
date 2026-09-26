@@ -2,13 +2,16 @@
 #define LOCKEDSTATE_H
 
 #include "AccessState.h"
+#include <string>
 
-class LockedState: public AccessState{
-    public:
-        LockedState(CampusArea* context);
-        ~LockedState();
-        void updateState();
-        string describe();
+class LockedState : public AccessState
+{
+public:
+    explicit LockedState(CampusArea* context);
+    ~LockedState();
+
+    void updateState();
+    std::string describe();
 };
 
 #endif

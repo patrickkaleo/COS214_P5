@@ -11,10 +11,9 @@
 #include <iostream>
 
 CampusGuardFacade::CampusGuardFacade(
-    Operator* op,
-    TeamCoordinator* coordinator,
-    AlertService* alert
-)
+    Operator *op,
+    TeamCoordinator *coordinator,
+    AlertService *alert)
     : op(op),
       coordinator(coordinator),
       alert(alert)
@@ -26,8 +25,7 @@ CampusGuardFacade::~CampusGuardFacade()
 }
 
 void CampusGuardFacade::logIncident(
-    Incident* incident
-)
+    Incident *incident)
 {
     if (incident == nullptr)
     {
@@ -42,16 +40,14 @@ void CampusGuardFacade::logIncident(
 }
 
 void CampusGuardFacade::reportIncident(
-    Incident* incident,
-    CampusArea* area
-)
+    Incident *incident,
+    CampusArea *area)
 {
     if (
         incident == nullptr ||
         area == nullptr ||
         op == nullptr ||
-        alert == nullptr
-    )
+        alert == nullptr)
     {
         std::cout
             << "[Facade] Invalid report."

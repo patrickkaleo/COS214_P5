@@ -1,6 +1,8 @@
 #include "CampusArea.h"
 #include "AccessState.h"
 #include "OpenState.h"
+#include "Incident.h"
+#include "ResponseUnit.h"
 
 #include <iostream>
 
@@ -52,18 +54,44 @@ void CampusArea::updateState(AccessState* newState)
 
 void CampusArea::addResponseUnit(ResponseUnit* unit)
 {
-    if (unit != nullptr)
+    if (unit == nullptr)
     {
-        responders.push_back(unit);
+        return;
     }
+
+    for (ResponseUnit* existing : responders)
+    {
+        if (existing == unit)
+        {
+            return;
+        }
+    }
+
+    responders.push_back(unit);
+
+    std::cout
+        << "[Area] "
+        << unit->getId()
+        << " recorded as personnel at "
+        << id
+        << "."
+        << std::endl;
 }
 
 void CampusArea::addIncident(Incident* incident)
 {
-    if (incident != nullptr)
+    if (incident == nullptr)
     {
-        incidents.push_back(incident);
+        return;
     }
+
+    incidents.push_back(incident);
+    incident->setArea(this);
+}
+
+bool CampusArea::hasPersonnel() const
+{
+    return !responders.empty();
 }
 
 std::string CampusArea::getId() const

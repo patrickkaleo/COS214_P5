@@ -34,6 +34,8 @@ void ResponseUnit::respond(CampusArea* area)
         << area->getId()
         << "."
         << std::endl;
+
+    area->addResponseUnit(this);
 }
 
 std::string ResponseUnit::getId() const

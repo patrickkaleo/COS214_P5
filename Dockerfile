@@ -14,4 +14,4 @@ COPY . .
 
 RUN make clean && make
 
-CMD ["./bin/campusguard"]
+CMD ["./campusguard"]

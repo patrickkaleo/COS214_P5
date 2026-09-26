@@ -1,10 +1,12 @@
 #include "Incident.h"
 #include "IncidentState.h"
 #include "NewState.h"
+#include "CampusArea.h"
 
 Incident::Incident(std::string description)
     : state(new NewState(this)),
-      description(description)
+      description(description),
+      area(nullptr)
 {
 }
 
@@ -33,6 +35,21 @@ void Incident::progress()
     {
         state->updateState();
     }
+}
+
+void Incident::setArea(CampusArea* area)
+{
+    this->area = area;
+}
+
+bool Incident::areaHasPersonnel() const
+{
+    if (area == nullptr)
+    {
+        return false;
+    }
+
+    return area->hasPersonnel();
 }
 
 std::string Incident::describe()

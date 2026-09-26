@@ -28,6 +28,7 @@ public:
     void addResponseUnit(ResponseUnit* unit);
     void addIncident(Incident* incident);
 
+    bool hasPersonnel() const;
     std::string getId() const;
     std::string getStateDescription() const;
 };

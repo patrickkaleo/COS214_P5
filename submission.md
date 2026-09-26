@@ -70,6 +70,6 @@ _VI. Composite_
 - Component: `CampusArea`
 - Composite: `Building`
 - Leaf: `Room`
----
+
 
 __Task 2: Implement the Integrated Model__

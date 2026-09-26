@@ -1,3 +1,2 @@
 #!/bin/bash
 pandoc submission.md -o submission.pdf
-pandoc script.md -o script.pdf

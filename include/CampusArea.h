@@ -30,7 +30,7 @@ public:
 
     bool hasPersonnel() const;
     std::string getId() const;
-    std::string getStateDescription() const;
+    AccessState* getState() const;
 };
 
 #endif

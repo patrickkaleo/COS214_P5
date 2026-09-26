@@ -2,13 +2,16 @@
 #define MITIGATIONSTATE_H
 
 #include "IncidentState.h"
+#include <string>
 
-class MitigationState:public IncidentState{
-    public:
-        MitigationState(Incident* context);
-        ~MitigationState();
-        string describe();
-        void updateState();
+class MitigationState : public IncidentState
+{
+public:
+    explicit MitigationState(Incident* context);
+    ~MitigationState();
+
+    void updateState();
+    std::string describe();
 };
 
 #endif

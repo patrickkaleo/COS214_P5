@@ -15,7 +15,7 @@ CampusArea::~CampusArea()
     delete state;
 }
 
-void CampusArea::add(CampusArea* area)
+void CampusArea::add(CampusArea* /* area */)
 {
     std::cout
         << "[Composite] Cannot add a child to leaf area "

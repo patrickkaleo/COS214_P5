@@ -2,13 +2,16 @@
 #define OPENSTATE_H
 
 #include "AccessState.h"
+#include <string>
 
-class OpenState:public AccessState{
-    public:
-        OpenState(CampusArea* context);
-        ~OpenState();
-        void updateState();
-        string describe();
+class OpenState : public AccessState
+{
+public:
+    explicit OpenState(CampusArea* context);
+    ~OpenState();
+
+    void updateState();
+    std::string describe();
 };
 
 #endif

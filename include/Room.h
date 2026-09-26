@@ -2,12 +2,13 @@
 #define ROOM_H
 
 #include "CampusArea.h"
+#include <string>
 
-class Room :public CampusArea{
-    public:
-        Room(string description);
-        ~Room();
+class Room : public CampusArea
+{
+public:
+    explicit Room(std::string description);
+    ~Room();
 };
-
 
 #endif

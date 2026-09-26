@@ -2,10 +2,12 @@
 #define MEDICALTEAM_H
 
 #include "ResponseUnit.h"
+#include <string>
 
-class MedicalTeam: public ResponseUnit{
-    public:
-        MedicalTeam(string id);
+class MedicalTeam : public ResponseUnit
+{
+public:
+    explicit MedicalTeam(std::string id);
 };
 
 #endif

@@ -1,20 +1,24 @@
 #ifndef INCIDENT_H
 #define INCIDENT_H
 
-class IncidentState;
 #include <string>
 
-using namespace std;
+class IncidentState;
 
-class Incident{
-    private:
-        IncidentState* state;
-        string description;
-    public:
-        Incident();
-        void updateState(IncidentState* newState);
-        string describe();
+class Incident
+{
+private:
+    IncidentState* state;
+    std::string description;
+
+public:
+    explicit Incident(std::string description = "Unknown incident");
+    ~Incident();
+
+    void updateState(IncidentState* newState);
+    void progress();
+
+    std::string describe();
 };
-
 
 #endif

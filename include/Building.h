@@ -3,15 +3,18 @@
 
 #include "CampusArea.h"
 
-class Building :public CampusArea{
-    private:
-        std::vector<CampusArea*> children;
-    public:
-        Building(string description);
-        ~Building();
-        void add(CampusArea* area);
-        void display(string indent);
-        void updateState(AccessState* newState);
+class Building : public CampusArea
+{
+private:
+    std::vector<CampusArea*> children;
+
+public:
+    explicit Building(std::string description);
+    ~Building();
+
+    void add(CampusArea* area);
+    void display(std::string indent = "");
+    void updateState(AccessState* newState);
 };
 
 #endif

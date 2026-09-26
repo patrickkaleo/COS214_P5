@@ -54,9 +54,9 @@ void TeamCoordinator::deploy(
         << "."
         << std::endl;
 
-    unit->respond(area);
+    area->addResponseUnit(unit);
 
-    notify(area, unit);
+    unit->respond(area);
 }
 
 void TeamCoordinator::notify(
@@ -72,7 +72,7 @@ void TeamCoordinator::notify(
     {
         if (unit != source)
         {
-            unit->respond(area);
+            unit->support(area);
         }
     }
 }

@@ -6,6 +6,7 @@ class TeamCoordinator;
 class AlertService;
 class Incident;
 class CampusArea;
+class ResponseUnit;
 
 class CampusGuardFacade
 {
@@ -13,6 +14,8 @@ private:
     Operator* op;
     TeamCoordinator* coordinator;
     AlertService* alert;
+
+    void logIncident(Incident* incident);
 
 public:
     CampusGuardFacade(
@@ -23,9 +26,18 @@ public:
 
     ~CampusGuardFacade();
 
-    void logIncident(Incident* incident);
-
     void reportIncident(
+        Incident* incident,
+        CampusArea* area
+    );
+
+    void mobilise(
+        Incident* incident,
+        CampusArea* area,
+        ResponseUnit* unit
+    );
+
+    void closeIncident(
         Incident* incident,
         CampusArea* area
     );

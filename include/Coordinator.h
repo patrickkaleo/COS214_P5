@@ -11,9 +11,8 @@ public:
     virtual ~Coordinator();
 
     virtual void deploy(
-        CampusArea* area,
-        ResponseUnit* unit
-    ) = 0;
+        CampusArea *area,
+        ResponseUnit *unit) = 0;
 };
 
 #endif

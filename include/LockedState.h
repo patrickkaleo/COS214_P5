@@ -9,7 +9,6 @@ class LockedState : public AccessState
 public:
     explicit LockedState(CampusArea* context);
     ~LockedState();
-
     void updateState();
     std::string describe();
 };

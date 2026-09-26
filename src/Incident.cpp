@@ -54,6 +54,8 @@ bool Incident::areaHasPersonnel() const
 {
 	if (this->area)
 		return area->hasPersonnel();
+		
+	return false;
 }
 
 std::string Incident::describe()

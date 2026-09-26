@@ -16,7 +16,10 @@ void UnlockArea::excute()
         return;
     }
 
-    if (target->getStateDescription() == "OPEN")
+    if (
+        target->getState() != nullptr &&
+        target->getState()->describe() == "OPEN"
+    )
     {
         std::cout
             << "[UnlockArea] INVALID: "

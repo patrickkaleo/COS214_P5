@@ -1,0 +1,11 @@
+.git
+.gitignore
+**/.git
+bin
+*.pdf
+*.md
+docs
+.cursor
+*.o
+*.exe
+campusguard

@@ -7,13 +7,18 @@
 
 #include "RestrictArea.h"
 #include "IssueAlert.h"
+#include "DispatchUnit.h"
+#include "LockArea.h"
+#include "UnlockArea.h"
+#include "ResponseUnit.h"
 
 #include <iostream>
 
 CampusGuardFacade::CampusGuardFacade(
-    Operator *op,
-    TeamCoordinator *coordinator,
-    AlertService *alert)
+    Operator* op,
+    TeamCoordinator* coordinator,
+    AlertService* alert
+)
     : op(op),
       coordinator(coordinator),
       alert(alert)
@@ -25,7 +30,8 @@ CampusGuardFacade::~CampusGuardFacade()
 }
 
 void CampusGuardFacade::logIncident(
-    Incident *incident)
+    Incident* incident
+)
 {
     if (incident == nullptr)
     {
@@ -40,14 +46,16 @@ void CampusGuardFacade::logIncident(
 }
 
 void CampusGuardFacade::reportIncident(
-    Incident *incident,
-    CampusArea *area)
+    Incident* incident,
+    CampusArea* area
+)
 {
     if (
         incident == nullptr ||
         area == nullptr ||
         op == nullptr ||
-        alert == nullptr)
+        alert == nullptr
+    )
     {
         std::cout
             << "[Facade] Invalid report."
@@ -60,20 +68,86 @@ void CampusGuardFacade::reportIncident(
         << "[Facade] Handling incident."
         << std::endl;
 
-    // 1. Record incident
     logIncident(incident);
 
-    // 2. Associate incident with area
     area->addIncident(incident);
 
-    // 3. Move NEW -> ASSIGNED
     incident->progress();
 
-    // 4. Restrict affected area
     RestrictArea restrict(area);
     op->run(&restrict);
 
-    // 5. Send emergency alert
     IssueAlert alertCommand(alert);
     op->run(&alertCommand);
+}
+
+void CampusGuardFacade::mobilise(
+    Incident* incident,
+    CampusArea* area,
+    ResponseUnit* unit
+)
+{
+    if (
+        incident == nullptr ||
+        area == nullptr ||
+        unit == nullptr ||
+        op == nullptr ||
+        coordinator == nullptr
+    )
+    {
+        std::cout
+            << "[Facade] Invalid mobilisation."
+            << std::endl;
+
+        return;
+    }
+
+    std::cout
+        << "[Facade] Mobilising "
+        << unit->getId()
+        << " for "
+        << incident->describe()
+        << "."
+        << std::endl;
+
+    DispatchUnit dispatch(coordinator, unit, area);
+    op->run(&dispatch);
+
+    LockArea lock(area);
+    op->run(&lock);
+
+    incident->progress();
+}
+
+void CampusGuardFacade::closeIncident(
+    Incident* incident,
+    CampusArea* area
+)
+{
+    if (
+        incident == nullptr ||
+        area == nullptr ||
+        op == nullptr ||
+        alert == nullptr
+    )
+    {
+        std::cout
+            << "[Facade] Invalid close."
+            << std::endl;
+
+        return;
+    }
+
+    std::cout
+        << "[Facade] Closing "
+        << incident->describe()
+        << "."
+        << std::endl;
+    incident->progress();
+
+    UnlockArea reopen(area);
+    op->run(&reopen);
+
+    IssueAlert allClear(alert);
+    op->run(&allClear);
 }

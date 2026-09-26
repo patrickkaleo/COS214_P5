@@ -19,7 +19,10 @@ public:
     virtual ~ResponseUnit();
 
     void setMediator(TeamCoordinator* mediator);
-    virtual void respond(CampusArea* area);
+    void respond(CampusArea* area);
+    void support(CampusArea* area);
+
+    virtual std::string describe() = 0;
 
     std::string getId() const;
 };

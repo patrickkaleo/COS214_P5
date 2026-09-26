@@ -8,6 +8,8 @@ class SecurityTeam : public ResponseUnit
 {
 public:
     explicit SecurityTeam(std::string id);
+
+    std::string describe();
 };
 
 #endif

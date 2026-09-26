@@ -27,7 +27,6 @@ compress: $(SOURCES) submission.md
 
 clean:
 	rm -rf $(BUILD_DIR)/*
-	clear
 
 debug: $(TARGET)
 	gdb ./$(TARGET)

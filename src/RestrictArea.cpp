@@ -17,8 +17,8 @@ void RestrictArea::excute()
     }
 
     if (
-        target->getStateDescription()
-        == "RESTRICTED"
+        target->getState() != nullptr &&
+        target->getState()->describe() == "RESTRICTED"
     )
     {
         std::cout

@@ -16,7 +16,10 @@ void LockArea::excute()
         return;
     }
 
-    if (target->getStateDescription() == "LOCKED")
+    if (
+        target->getState() != nullptr &&
+        target->getState()->describe() == "LOCKED"
+    )
     {
         std::cout
             << "[LockArea] "

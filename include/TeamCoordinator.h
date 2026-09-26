@@ -17,7 +17,7 @@ public:
     ~TeamCoordinator();
 
     void deploy(CampusArea* area, ResponseUnit* unit);
-    void notify(CampusArea* area, ResponseUnit* unit);
+    void notify(CampusArea* area, ResponseUnit* source);
 
     void addColeague(ResponseUnit* coleague);
 };

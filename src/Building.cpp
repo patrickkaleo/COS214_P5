@@ -40,12 +40,19 @@ void Building::add(CampusArea* area)
 
 void Building::display(std::string indent)
 {
+    std::string access = "UNKNOWN";
+
+    if (getState() != nullptr)
+    {
+        access = getState()->describe();
+    }
+
     std::cout
         << indent
         << "+ "
         << id
         << " ["
-        << getStateDescription()
+        << access
         << "]"
         << std::endl;
 

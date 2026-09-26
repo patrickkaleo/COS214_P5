@@ -9,12 +9,10 @@ class AccessState
 {
 protected:
     CampusArea* context;
-
-    explicit AccessState(CampusArea* context);
+    AccessState();
 
 public:
     virtual ~AccessState();
-
     virtual void updateState() = 0;
     virtual std::string describe() = 0;
 };

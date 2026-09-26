@@ -26,11 +26,11 @@ A high-level workflow can run several of these steps in sequence (activate or re
 
 _b. UML Diagram_
 
-[Uml segment on showing Command, Mediator and Adapter pattern in our system](docs/_uml01.png)
+![Command, Mediator and Adapter](docs/_uml01.png)
 
-[Uml segment on showing the different areas, access state and the incident class with it's related states](docs/_uml02.png)
+![Areas, access state and the incident states](docs/_uml02.png)
 
-[Uml segment showing Facade pattern in our system](docs/_uml03.png)
+![CampusGuardFacade with Operator, AlertService and TeamCoordinator](docs/_facade.png)
 
 _c. GoF Participants in named patterns_
 
@@ -73,3 +73,29 @@ _VI. Composite_
 
 
 __Task 2: Implement the Integrated Model__
+
+__Task 4: UML Diagram Portfolio__
+
+_Class diagram: Command, Mediator and Adapter_
+
+![Command, Mediator and Adapter](docs/_uml01.png)
+
+_Class diagram: areas, access state and incident states_
+
+![Areas, access state and the incident states](docs/_uml02.png)
+
+_Class diagram: Facade, operator, alert service and team coordinator_
+
+![CampusGuardFacade with Operator, AlertService and TeamCoordinator](docs/_facade.png)
+
+_Sequence diagram: dispatch a unit (Command and Mediator)_
+
+![DispatchUnit through TeamCoordinator, then support from the other teams](docs/_task4_SD1.png)
+
+_Sequence diagram: report an incident (Facade)_
+
+![CampusGuardFacade reportIncident](docs/_task4_SD2.png)
+
+_State diagram: incident lifecycle_
+
+![NewState, AssignedState, MitigationState and ResolvedState](docs/_task4_state.png)

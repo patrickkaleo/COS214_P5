@@ -1,17 +1,20 @@
-FROM ubuntu:24.04
+FROM ubuntu:22.04
 
-RUN apt-get update && \
-    apt-get install -y \
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
         g++ \
         make \
         gdb \
-        valgrind && \
-    rm -rf /var/lib/apt/lists/*
+        valgrind \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY . .
+COPY Makefile .
+COPY include/ include/
+COPY src/ src/
 
-RUN make clean && make
+RUN make
 
 CMD ["./campusguard"]

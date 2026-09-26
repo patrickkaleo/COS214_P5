@@ -2,10 +2,12 @@
 #define SECURITYTEAM_H
 
 #include "ResponseUnit.h"
+#include <string>
 
-class SecurityTeam: public ResponseUnit{
-    public:
-        SecurityTeam(string id);    
+class SecurityTeam : public ResponseUnit
+{
+public:
+    explicit SecurityTeam(std::string id);
 };
 
 #endif

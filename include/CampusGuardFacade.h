@@ -1,23 +1,34 @@
 #ifndef CAMPUSGUARDFACADE_H
 #define CAMPUSGUARDFACADE_H
 
-#include "Operator.h"
-#include "TeamCoordinator.h"
-#include "AlertService.h"
-#include "Incident.h"
-#include "CampusArea.h"
+class Operator;
+class TeamCoordinator;
+class AlertService;
+class Incident;
+class CampusArea;
 
-class CampusGuardFacade{
-    private:
-        Operator* op; //cant use operator. reserved keyword
-        TeamCoordinator* coordinator;
-        AlertService* alert;
-    public:
-        CampusGuardFacade();
-        ~CampusGuardFacade();
+class CampusGuardFacade
+{
+private:
+    Operator* op;
+    TeamCoordinator* coordinator;
+    AlertService* alert;
 
-        void logIncident(Incident* incident);
-        void reportIncident(Incident* incident , CampusArea* area);
+public:
+    CampusGuardFacade(
+        Operator* op,
+        TeamCoordinator* coordinator,
+        AlertService* alert
+    );
+
+    ~CampusGuardFacade();
+
+    void logIncident(Incident* incident);
+
+    void reportIncident(
+        Incident* incident,
+        CampusArea* area
+    );
 };
 
 #endif

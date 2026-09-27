@@ -27,9 +27,9 @@ CampusGuardFacade::CampusGuardFacade(
 
 CampusGuardFacade::~CampusGuardFacade()
 {
-	if(this->op) delete this->op;
-	if(this->coordinator) delete this->coordinator;
-	if(this->alert) delete this->alert;
+	// if(this->op) delete this->op;
+	// if(this->coordinator) delete this->coordinator;
+	// if(this->alert) delete this->alert;
 }
 
 void CampusGuardFacade::logIncident(

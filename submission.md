@@ -225,5 +225,3 @@ Work is on `main`, `dev` and `Task-2-Implement-the-Integrated-Model`. Pull reque
 Patrick Simuyemba (`patrickkaleo`) created the repo, folder layout, Task 1 write-up and first UML, later Makefile/Docker adjustments, incident-area coupling, and the state-transition guards above.
 
 Shelby Bodenstein implemented most of the C++ model (commands, states, composite, mediator, adapter, facade, `main`), added the first Dockerfile and the `campusguard` Compose service, and opened the integration PR.
-
-All three members have commits on the remote. The teaching team can follow design and implementation in that history.

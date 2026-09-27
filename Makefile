@@ -3,27 +3,30 @@ CXXFLAGS = -std=c++11 -Wall -Wextra -pedantic -g
 
 SRC_DIR = src
 INC_DIR = include
-BIN_DIR = bin
+BUILD_DIR = build
 
-TARGET = $(BIN_DIR)/campusguard
+TARGET = campusguard
 
 SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
-OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(BIN_DIR)/%.o)
+OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(TARGET)
 
-$(BIN_DIR)/%.o: $(SRC_DIR)/%.cpp
-	mkdir -p $(BIN_DIR)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@
 
 run: $(TARGET)
 	./$(TARGET)
 
+compress: $(SOURCES) submission.md 
+	./bin/compress
+
 clean:
-	rm -rf $(BIN_DIR)/*
+	rm -rf $(BUILD_DIR)/*
 
 debug: $(TARGET)
 	gdb ./$(TARGET)

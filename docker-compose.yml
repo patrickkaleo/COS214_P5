@@ -4,3 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: campusguard
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined

@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-COPY Makefile .
+COPY makefile .
 COPY include/ include/
 COPY src/ src/
 

@@ -32,844 +32,722 @@
 
 int main()
 {
-    std::cout
-        << "====================================\n"
-        << "          CAMPUSGUARD\n"
-        << "====================================\n";
+	std::cout
+		<< "====================================\n"
+		<< "          CAMPUSGUARD\n"
+		<< "====================================\n";
 
+	// ====================================================
+	// COMPOSITE
+	// ====================================================
 
-    // ====================================================
-    // COMPOSITE
-    // ====================================================
+	Building *engineering =
+		new Building("Engineering Building");
 
-    Building* engineering =
-        new Building("Engineering Building");
+	engineering->add(
+		new Room("Engineering Lab"));
 
-    engineering->add(
-        new Room("Engineering Lab")
-    );
+	engineering->add(
+		new Room("Lecture Room 2-1"));
 
-    engineering->add(
-        new Room("Lecture Room 2-1")
-    );
+	engineering->add(
+		new Room("Server Room"));
 
-    engineering->add(
-        new Room("Server Room")
-    );
+	Building *science =
+		new Building("Science Building");
 
+	science->add(
+		new Room("Chemistry Lab"));
 
-    Building* science =
-        new Building("Science Building");
+	science->add(
+		new Room("Physics Lab"));
 
-    science->add(
-        new Room("Chemistry Lab")
-    );
+	// ====================================================
+	// MEDIATOR
+	// ====================================================
 
-    science->add(
-        new Room("Physics Lab")
-    );
+	TeamCoordinator coordinator;
 
+	SecurityTeam security(
+		"Campus Security");
 
-    // ====================================================
-    // MEDIATOR
-    // ====================================================
+	MedicalTeam medical(
+		"Medical Team");
 
-    TeamCoordinator coordinator;
+	FacilitiesStaff facilities(
+		"Facilities Staff");
 
-    SecurityTeam security(
-        "Campus Security"
-    );
+	CommunicationsTeam communications(
+		"Communications Team");
 
-    MedicalTeam medical(
-        "Medical Team"
-    );
+	coordinator.addColeague(&security);
+	coordinator.addColeague(&medical);
+	coordinator.addColeague(&facilities);
+	coordinator.addColeague(&communications);
 
-    FacilitiesStaff facilities(
-        "Facilities Staff"
-    );
+	// ====================================================
+	// ADAPTER
+	// ====================================================
 
-    CommunicationsTeam communications(
-        "Communications Team"
-    );
+	LegacyAlertService legacyAlert;
 
+	AlertServiceAdapter alertAdapter(
+		&legacyAlert);
 
-    coordinator.addColeague(&security);
-    coordinator.addColeague(&medical);
-    coordinator.addColeague(&facilities);
-    coordinator.addColeague(&communications);
+	// ====================================================
+	// COMMAND INVOKER
+	// ====================================================
 
+	Operator campusOperator;
 
-    // ====================================================
-    // ADAPTER
-    // ====================================================
+	// ====================================================
+	// SCENARIO 1
+	// FIRE IN ENGINEERING
+	//
+	// Patterns:
+	// State
+	// Command
+	// Mediator
+	// Composite
+	// Adapter
+	// ====================================================
 
-    LegacyAlertService legacyAlert;
+	std::cout
+		<< "\n====================================\n"
+		<< " SCENARIO 1: ENGINEERING FIRE\n"
+		<< "====================================\n";
 
-    AlertServiceAdapter alertAdapter(
-        &legacyAlert
-    );
+	Incident fire(
+		"Fire in Engineering Lab");
 
+	engineering->addIncident(&fire);
 
-    // ====================================================
-    // COMMAND INVOKER
-    // ====================================================
+	std::cout
+		<< "\nInitial incident:\n"
+		<< fire.describe()
+		<< std::endl;
 
-    Operator campusOperator;
+	// STATE:
+	// NEW -> ASSIGNED
 
+	std::cout
+		<< "\n1. Assign incident\n";
 
-    // ====================================================
-    // SCENARIO 1
-    // FIRE IN ENGINEERING
-    //
-    // Patterns:
-    // State
-    // Command
-    // Mediator
-    // Composite
-    // Adapter
-    // ====================================================
+	fire.progress();
 
-    std::cout
-        << "\n====================================\n"
-        << " SCENARIO 1: ENGINEERING FIRE\n"
-        << "====================================\n";
+	std::cout
+		<< "\nTrying to mitigate before security is on site:\n";
 
+	fire.progress();
 
-    Incident fire(
-        "Fire in Engineering Lab"
-    );
+	std::cout
+		<< fire.describe()
+		<< std::endl;
 
-    engineering->addIncident(&fire);
+	// COMMAND + MEDIATOR
 
+	std::cout
+		<< "\n2. Dispatch security and assign the incident to them\n";
 
-    std::cout
-        << "\nInitial incident:\n"
-        << fire.describe()
-        << std::endl;
+	DispatchUnit dispatchSecurity(
+		&coordinator,
+		&security,
+		engineering);
 
+	campusOperator.run(
+		&dispatchSecurity);
+	
+	fire.progress();
+	std::cout << fire.describe() <<std::endl;
 
-    // STATE:
-    // NEW -> ASSIGNED
+	// COMMAND + STATE + COMPOSITE
 
-    std::cout
-        << "\n1. Assign incident\n";
+	std::cout
+		<< "\n3. Restrict Engineering Building\n";
 
-    fire.progress();
+	RestrictArea restrictEngineering(
+		engineering);
 
+	campusOperator.run(
+		&restrictEngineering);
 
-    std::cout
-        << "\nTrying to mitigate before security is on site:\n";
+	std::cout
+		<< "\nBuilding hierarchy:\n";
 
-    fire.progress();
+	engineering->display();
 
-    std::cout
-        << fire.describe()
-        << std::endl;
+	// COMMAND + ADAPTER
 
+	std::cout
+		<< "\n4. Send emergency alert\n";
 
-    // COMMAND + MEDIATOR
+	IssueAlert emergencyAlert(
+		&alertAdapter);
 
-    std::cout
-        << "\n2. Dispatch security\n";
+	campusOperator.run(
+		&emergencyAlert);
 
-    DispatchUnit dispatchSecurity(
-        &coordinator,
-        &security,
-        engineering
-    );
+	// STATE:
+	// ASSIGNED -> MITIGATION
 
-    campusOperator.run(
-        &dispatchSecurity
-    );
+	std::cout
+		<< "\n5. Begin mitigation\n";
 
+	fire.progress();
 
-    // COMMAND + STATE + COMPOSITE
+	std::cout
+		<< fire.describe()
+		<< std::endl;
 
-    std::cout
-        << "\n3. Restrict Engineering Building\n";
+	// STATE:
+	// MITIGATION -> RESOLVED
 
-    RestrictArea restrictEngineering(
-        engineering
-    );
+	std::cout
+		<< "\n6. Resolve incident\n";
 
-    campusOperator.run(
-        &restrictEngineering
-    );
+	fire.progress();
 
+	std::cout
+		<< fire.describe()
+		<< std::endl;
 
-    std::cout
-        << "\nBuilding hierarchy:\n";
+	// COMMAND + COMPOSITE
 
-    engineering->display();
+	std::cout
+		<< "\n7. Reopen Engineering Building\n";
 
+	UnlockArea reopenEngineering(
+		engineering);
 
-    // COMMAND + ADAPTER
+	campusOperator.run(
+		&reopenEngineering);
 
-    std::cout
-        << "\n4. Send emergency alert\n";
+	engineering->display();
 
-    IssueAlert emergencyAlert(
-        &alertAdapter
-    );
+	// ====================================================
+	// FAILURE / INVALID CASES
+	// ====================================================
 
-    campusOperator.run(
-        &emergencyAlert
-    );
+	std::cout
+		<< "\n====================================\n"
+		<< " INVALID OPERATION TESTS\n"
+		<< "====================================\n";
 
+	std::cout
+		<< "\nTrying to reopen an already OPEN building:\n";
 
-    // STATE:
-    // ASSIGNED -> MITIGATION
+	campusOperator.run(
+		&reopenEngineering);
 
-    std::cout
-        << "\n5. Begin mitigation\n";
+	std::cout
+		<< "\nTrying to progress a RESOLVED incident:\n";
 
-    fire.progress();
+	fire.progress();
 
-    std::cout
-        << fire.describe()
-        << std::endl;
+	std::cout
+		<< "\nTrying to record the fire on Engineering again:\n";
 
+	engineering->addIncident(&fire);
 
-    // STATE:
-    // MITIGATION -> RESOLVED
+	std::cout
+		<< "\nTrying to record that same fire on Science:\n";
 
-    std::cout
-        << "\n6. Resolve incident\n";
+	science->addIncident(&fire);
 
-    fire.progress();
+	// ====================================================
+	// SCENARIO 2
+	// CHEMICAL LEAK
+	//
+	// Main focus:
+	// Facade
+	// ====================================================
 
-    std::cout
-        << fire.describe()
-        << std::endl;
+	std::cout
+		<< "\n====================================\n"
+		<< " SCENARIO 2: CHEMICAL LEAK\n"
+		<< "====================================\n";
 
+	Incident chemicalLeak(
+		"Chemical leak in Chemistry Lab");
 
-    // COMMAND + COMPOSITE
+	CampusGuardFacade facade(
+		&campusOperator,
+		&coordinator,
+		&alertAdapter);
 
-    std::cout
-        << "\n7. Reopen Engineering Building\n";
+	// Client makes one simple Facade call.
 
-    UnlockArea reopenEngineering(
-        engineering
-    );
+	std::cout
+		<< "\n1. Report emergency through Facade\n";
 
-    campusOperator.run(
-        &reopenEngineering
-    );
+	facade.reportIncident(
+		&chemicalLeak,
+		science);
 
-    engineering->display();
+	std::cout
+		<< "\nCurrent incident:\n"
+		<< chemicalLeak.describe()
+		<< std::endl;
 
+	std::cout
+		<< "\nScience Building:\n";
 
-    // ====================================================
-    // FAILURE / INVALID CASES
-    // ====================================================
+	science->display();
 
-    std::cout
-        << "\n====================================\n"
-        << " INVALID OPERATION TESTS\n"
-        << "====================================\n";
+	std::cout
+		<< "\nTrying to mitigate before the medical team arrives:\n";
 
+	chemicalLeak.progress();
 
-    std::cout
-        << "\nTrying to reopen an already OPEN building:\n";
+	std::cout
+		<< chemicalLeak.describe()
+		<< std::endl;
 
-    campusOperator.run(
-        &reopenEngineering
-    );
+	// COMMAND + MEDIATOR + STATE
 
+	std::cout
+		<< "\n2. Mobilise medical response\n";
 
-    std::cout
-        << "\nTrying to progress a RESOLVED incident:\n";
+	facade.mobilise(
+		&chemicalLeak,
+		science,
+		&medical);
 
-    fire.progress();
+	std::cout
+		<< chemicalLeak.describe()
+		<< std::endl;
 
+	std::cout
+		<< "\nTrying to lock Science again:\n";
 
-    std::cout
-        << "\nTrying to record the fire on Engineering again:\n";
+	LockArea lockScience(science);
 
-    engineering->addIncident(&fire);
+	campusOperator.run(&lockScience);
 
+	science->display();
 
-    std::cout
-        << "\nTrying to record that same fire on Science:\n";
+	std::cout
+		<< "\n3. Close the chemical leak\n";
 
-    science->addIncident(&fire);
+	facade.closeIncident(
+		&chemicalLeak,
+		science);
 
+	std::cout
+		<< chemicalLeak.describe()
+		<< std::endl;
 
-    // ====================================================
-    // SCENARIO 2
-    // CHEMICAL LEAK
-    //
-    // Main focus:
-    // Facade
-    // ====================================================
+	science->display();
 
-    std::cout
-        << "\n====================================\n"
-        << " SCENARIO 2: CHEMICAL LEAK\n"
-        << "====================================\n";
+	// ====================================================
+	// SCENARIO 3
+	// POWER CUT
+	//
+	// nobody on site, then facilities get sent
+	// ====================================================
 
+	std::cout
+		<< "\n====================================\n"
+		<< " SCENARIO 3: LIBRARY POWER CUT\n"
+		<< "====================================\n";
 
-    Incident chemicalLeak(
-        "Chemical leak in Chemistry Lab"
-    );
+	Building *library =
+		new Building("Library");
 
+	library->add(
+		new Room("Reading Room"));
 
-    CampusGuardFacade facade(
-        &campusOperator,
-        &coordinator,
-        &alertAdapter
-    );
+	Incident powerCut(
+		"Power cut in the Library");
 
+	library->addIncident(&powerCut);
 
-    // Client makes one simple Facade call.
+	std::cout
+		<< "\n"
+		<< powerCut.describe()
+		<< std::endl;
 
-    std::cout
-        << "\n1. Report emergency through Facade\n";
+	std::cout
+		<< "\nAssign it\n";
 
-    facade.reportIncident(
-        &chemicalLeak,
-        science
-    );
+	powerCut.progress();
 
+	std::cout
+		<< "\nMitigate with an empty library:\n";
 
-    std::cout
-        << "\nCurrent incident:\n"
-        << chemicalLeak.describe()
-        << std::endl;
+	powerCut.progress();
 
+	std::cout
+		<< powerCut.describe()
+		<< std::endl;
 
-    std::cout
-        << "\nScience Building:\n";
+	std::cout
+		<< "\nMobilise facilities, then close the power cut\n";
 
-    science->display();
+	facade.mobilise(
+		&powerCut,
+		library,
+		&facilities);
 
+	std::cout
+		<< powerCut.describe()
+		<< std::endl;
 
-    std::cout
-        << "\nTrying to mitigate before the medical team arrives:\n";
+	facade.closeIncident(
+		&powerCut,
+		library);
 
-    chemicalLeak.progress();
+	std::cout
+		<< powerCut.describe()
+		<< std::endl;
 
-    std::cout
-        << chemicalLeak.describe()
-        << std::endl;
+	library->display();
 
+	std::cout
+		<< "\nRecord the power cut a second time:\n";
 
-    // COMMAND + MEDIATOR + STATE
+	library->addIncident(&powerCut);
 
-    std::cout
-        << "\n2. Mobilise medical response\n";
+	std::cout
+		<< "\nBad facade calls:\n";
 
-    facade.mobilise(
-        &chemicalLeak,
-        science,
-        &medical
-    );
+	facade.reportIncident(
+		nullptr,
+		library);
 
-    std::cout
-        << chemicalLeak.describe()
-        << std::endl;
+	facade.mobilise(
+		nullptr,
+		library,
+		&security);
 
+	facade.closeIncident(
+		nullptr,
+		library);
 
-    std::cout
-        << "\nTrying to lock Science again:\n";
+	facade.reportIncident(
+		&fire,
+		nullptr);
 
-    LockArea lockScience(science);
+	CampusGuardFacade noAlert(
+		&campusOperator,
+		&coordinator,
+		nullptr);
 
-    campusOperator.run(&lockScience);
+	noAlert.reportIncident(
+		&fire,
+		engineering);
 
-    science->display();
+	CampusGuardFacade noOperator(
+		nullptr,
+		nullptr,
+		&alertAdapter);
 
+	noOperator.mobilise(
+		&fire,
+		engineering,
+		&security);
 
-    std::cout
-        << "\n3. Close the chemical leak\n";
+	noOperator.closeIncident(
+		&fire,
+		engineering);
 
-    facade.closeIncident(
-        &chemicalLeak,
-        science
-    );
+	// ====================================================
+	// paths the three scenarios never take
+	// ====================================================
 
-    std::cout
-        << chemicalLeak.describe()
-        << std::endl;
+	std::cout
+		<< "\n====================================\n"
+		<< " EXTRA CHECKS\n"
+		<< "====================================\n";
 
-    science->display();
+	std::cout
+		<< "\nIncident that was never recorded on an area:\n";
 
+	Incident loose(
+		"Alarm with no area");
 
-    // ====================================================
-    // SCENARIO 3
-    // POWER CUT
-    //
-    // nobody on site, then facilities get sent
-    // ====================================================
+	loose.progress();
+	loose.progress();
 
-    std::cout
-        << "\n====================================\n"
-        << " SCENARIO 3: LIBRARY POWER CUT\n"
-        << "====================================\n";
+	std::cout
+		<< loose.describe()
+		<< std::endl;
 
+	loose.updateState(nullptr);
 
-    Building* library =
-        new Building("Library");
+	std::cout
+		<< "\nIncident that goes away while the library is still up:\n";
 
-    library->add(
-        new Room("Reading Room")
-    );
+	{
+		Incident alarm(
+			"Alarm test");
 
+		library->addIncident(&alarm);
+	}
 
-    Incident powerCut(
-        "Power cut in the Library"
-    );
+	std::cout
+		<< "\nNull adds and a room that cannot take a child:\n";
 
-    library->addIncident(&powerCut);
+	engineering->add(nullptr);
+	engineering->updateState(nullptr);
+	engineering->addIncident(nullptr);
+	engineering->addResponseUnit(nullptr);
 
-    std::cout
-        << "\n"
-        << powerCut.describe()
-        << std::endl;
+	Room *closet =
+		new Room("Storeroom");
 
+	closet->add(nullptr);
+	closet->updateState(nullptr);
 
-    std::cout
-        << "\nAssign it\n";
+	delete closet;
 
-    powerCut.progress();
+	std::cout
+		<< "\nCoordinator and operator with bad arguments:\n";
 
+	coordinator.addColeague(nullptr);
 
-    std::cout
-        << "\nMitigate with an empty library:\n";
+	coordinator.deploy(
+		nullptr,
+		&security);
 
-    powerCut.progress();
+	coordinator.deploy(
+		engineering,
+		nullptr);
 
-    std::cout
-        << powerCut.describe()
-        << std::endl;
+	campusOperator.run(nullptr);
 
+	std::cout
+		<< "\nCommands with nothing to work on:\n";
 
-    std::cout
-        << "\nMobilise facilities, then close the power cut\n";
+	LockArea lockNothing(nullptr);
+	campusOperator.run(&lockNothing);
 
-    facade.mobilise(
-        &powerCut,
-        library,
-        &facilities
-    );
+	UnlockArea unlockNothing(nullptr);
+	campusOperator.run(&unlockNothing);
 
-    std::cout
-        << powerCut.describe()
-        << std::endl;
+	RestrictArea restrictNothing(nullptr);
+	campusOperator.run(&restrictNothing);
 
-    facade.closeIncident(
-        &powerCut,
-        library
-    );
+	IssueAlert alertNothing(nullptr);
+	campusOperator.run(&alertNothing);
 
-    std::cout
-        << powerCut.describe()
-        << std::endl;
+	DispatchUnit dispatchNoTarget(
+		nullptr,
+		&security,
+		engineering);
 
+	campusOperator.run(&dispatchNoTarget);
 
-    library->display();
+	DispatchUnit dispatchNoUnit(
+		&coordinator,
+		nullptr,
+		engineering);
 
+	campusOperator.run(&dispatchNoUnit);
 
-    std::cout
-        << "\nRecord the power cut a second time:\n";
+	DispatchUnit dispatchNoArea(
+		&coordinator,
+		&security,
+		nullptr);
 
-    library->addIncident(&powerCut);
+	campusOperator.run(&dispatchNoArea);
 
+	std::cout
+		<< "\nSend security to Engineering again:\n";
 
-    std::cout
-        << "\nBad facade calls:\n";
+	DispatchUnit dispatchSecurityAgain(
+		&coordinator,
+		&security,
+		engineering);
 
-    facade.reportIncident(
-        nullptr,
-        library
-    );
+	campusOperator.run(
+		&dispatchSecurityAgain);
 
-    facade.mobilise(
-        nullptr,
-        library,
-        &security
-    );
+	std::cout
+		<< "\nUnit with no mediator, and null areas:\n";
 
-    facade.closeIncident(
-        nullptr,
-        library
-    );
+	SecurityTeam visitor(
+		"Night Guard");
 
-    facade.reportIncident(
-        &fire,
-        nullptr
-    );
+	visitor.respond(library);
+	visitor.respond(nullptr);
+	visitor.support(nullptr);
+	visitor.support(library);
 
+	std::cout
+		<< "\nPlain alert service, then an adapter with no legacy service:\n";
 
-    CampusGuardFacade noAlert(
-        &campusOperator,
-        &coordinator,
-        nullptr
-    );
+	AlertService plainAlert;
 
-    noAlert.reportIncident(
-        &fire,
-        engineering
-    );
+	IssueAlert campusNote(
+		&plainAlert);
 
+	std::cout
+		<< campusNote.describe()
+		<< std::endl;
 
-    CampusGuardFacade noOperator(
-        nullptr,
-        nullptr,
-        &alertAdapter
-    );
+	campusOperator.run(&campusNote);
 
-    noOperator.mobilise(
-        &fire,
-        engineering,
-        &security
-    );
+	AlertServiceAdapter noLegacy(nullptr);
 
-    noOperator.closeIncident(
-        &fire,
-        engineering
-    );
+	IssueAlert brokenAlert(
+		&noLegacy);
 
+	campusOperator.run(&brokenAlert);
 
-    // ====================================================
-    // paths the three scenarios never take
-    // ====================================================
+	std::cout
+		<< "\nDrill recorded on the library but tied to Engineering:\n";
 
-    std::cout
-        << "\n====================================\n"
-        << " EXTRA CHECKS\n"
-        << "====================================\n";
+	{
+		Incident drill(
+			"After hours drill");
 
+		library->addIncident(&drill);
+		drill.setArea(engineering);
 
-    std::cout
-        << "\nIncident that was never recorded on an area:\n";
+		DispatchUnit sendComms(
+			&coordinator,
+			&communications,
+			library);
 
-    Incident loose(
-        "Alarm with no area"
-    );
+		campusOperator.run(&sendComms);
 
-    loose.progress();
-    loose.progress();
+		drill.setArea(library);
+	}
 
-    std::cout
-        << loose.describe()
-        << std::endl;
+	std::cout
+		<< "\nLibrary access state moves itself:\n";
 
-    loose.updateState(nullptr);
+	library->getState()->updateState();
+	library->display();
 
+	library->getState()->updateState();
+	library->display();
 
-    std::cout
-        << "\nIncident that goes away while the library is still up:\n";
+	library->getState()->updateState();
+	library->display();
 
-    {
-        Incident alarm(
-            "Alarm test"
-        );
+	std::cout
+		<< "\nRestrict the library twice:\n";
 
-        library->addIncident(&alarm);
-    }
+	RestrictArea restrictLibrary(library);
+	campusOperator.run(&restrictLibrary);
+	campusOperator.run(&restrictLibrary);
 
+	std::cout
+		<< "\nTeam labels:\n";
 
-    std::cout
-        << "\nNull adds and a room that cannot take a child:\n";
+	std::cout
+		<< security.describe()
+		<< std::endl;
 
-    engineering->add(nullptr);
-    engineering->updateState(nullptr);
-    engineering->addIncident(nullptr);
-    engineering->addResponseUnit(nullptr);
+	std::cout
+		<< medical.describe()
+		<< std::endl;
 
-    Room* closet =
-        new Room("Storeroom");
+	std::cout
+		<< communications.describe()
+		<< std::endl;
 
-    closet->add(nullptr);
-    closet->updateState(nullptr);
+	std::cout
+		<< facilities.describe()
+		<< std::endl;
 
-    delete closet;
+	std::cout
+		<< "\nStates that were built with no context:\n";
 
+	OpenState openNone(nullptr);
+	openNone.updateState();
 
-    std::cout
-        << "\nCoordinator and operator with bad arguments:\n";
+	RestrictedState restrictedNone(nullptr);
+	restrictedNone.updateState();
 
-    coordinator.addColeague(nullptr);
+	LockedState lockedNone(nullptr);
+	lockedNone.updateState();
 
-    coordinator.deploy(
-        nullptr,
-        &security
-    );
+	NewState newNone(nullptr);
+	newNone.updateState();
 
-    coordinator.deploy(
-        engineering,
-        nullptr
-    );
+	std::cout
+		<< "\nClose a NEW incident in an empty shed:\n";
 
-    campusOperator.run(nullptr);
+	Building *shed =
+		new Building("Shed");
 
+	Incident drip(
+		"Drip in the shed");
 
-    std::cout
-        << "\nCommands with nothing to work on:\n";
+	shed->addIncident(&drip);
 
-    LockArea lockNothing(nullptr);
-    campusOperator.run(&lockNothing);
+	facade.closeIncident(
+		&drip,
+		shed);
 
-    UnlockArea unlockNothing(nullptr);
-    campusOperator.run(&unlockNothing);
+	std::cout
+		<< drip.describe()
+		<< std::endl;
 
-    RestrictArea restrictNothing(nullptr);
-    campusOperator.run(&restrictNothing);
+	delete shed;
 
-    IssueAlert alertNothing(nullptr);
-    campusOperator.run(&alertNothing);
+	std::cout
+		<< "\nClose a NEW incident where staff are already on site:\n";
 
-    DispatchUnit dispatchNoTarget(
-        nullptr,
-        &security,
-        engineering
-    );
+	Incident late(
+		"Late alarm in the library");
 
-    campusOperator.run(&dispatchNoTarget);
+	library->addIncident(&late);
 
-    DispatchUnit dispatchNoUnit(
-        &coordinator,
-        nullptr,
-        engineering
-    );
+	facade.closeIncident(
+		&late,
+		library);
 
-    campusOperator.run(&dispatchNoUnit);
+	std::cout
+		<< late.describe()
+		<< std::endl;
 
-    DispatchUnit dispatchNoArea(
-        &coordinator,
-        &security,
-        nullptr
-    );
+	std::cout
+		<< "\n====================================\n"
+		<< " FINAL STATUS\n"
+		<< "====================================\n";
 
-    campusOperator.run(&dispatchNoArea);
+	std::cout
+		<< "\nIncident 1: "
+		<< fire.describe()
+		<< std::endl;
 
+	std::cout
+		<< "Incident 2: "
+		<< chemicalLeak.describe()
+		<< std::endl;
 
-    std::cout
-        << "\nSend security to Engineering again:\n";
+	std::cout
+		<< "Incident 3: "
+		<< powerCut.describe()
+		<< std::endl;
 
-    DispatchUnit dispatchSecurityAgain(
-        &coordinator,
-        &security,
-        engineering
-    );
+	std::cout
+		<< "\nEngineering:\n";
 
-    campusOperator.run(
-        &dispatchSecurityAgain
-    );
+	engineering->display();
 
+	std::cout
+		<< "\nScience:\n";
 
-    std::cout
-        << "\nUnit with no mediator, and null areas:\n";
+	science->display();
 
-    SecurityTeam visitor(
-        "Night Guard"
-    );
+	std::cout
+		<< "\nLibrary:\n";
 
-    visitor.respond(library);
-    visitor.respond(nullptr);
-    visitor.support(nullptr);
-    visitor.support(library);
+	library->display();
 
+	delete engineering;
+	delete science;
+	delete library;
 
-    std::cout
-        << "\nPlain alert service, then an adapter with no legacy service:\n";
+	std::cout
+		<< "\n====================================\n"
+		<< " CampusGuard terminated successfully\n"
+		<< "====================================\n";
 
-    AlertService plainAlert;
-
-    IssueAlert campusNote(
-        &plainAlert
-    );
-
-    std::cout
-        << campusNote.describe()
-        << std::endl;
-
-    campusOperator.run(&campusNote);
-
-
-    AlertServiceAdapter noLegacy(nullptr);
-
-    IssueAlert brokenAlert(
-        &noLegacy
-    );
-
-    campusOperator.run(&brokenAlert);
-
-
-    std::cout
-        << "\nDrill recorded on the library but tied to Engineering:\n";
-
-    {
-        Incident drill(
-            "After hours drill"
-        );
-
-        library->addIncident(&drill);
-        drill.setArea(engineering);
-
-        DispatchUnit sendComms(
-            &coordinator,
-            &communications,
-            library
-        );
-
-        campusOperator.run(&sendComms);
-
-        drill.setArea(library);
-    }
-
-
-    std::cout
-        << "\nLibrary access state moves itself:\n";
-
-    library->getState()->updateState();
-    library->display();
-
-    library->getState()->updateState();
-    library->display();
-
-    library->getState()->updateState();
-    library->display();
-
-
-    std::cout
-        << "\nRestrict the library twice:\n";
-
-    RestrictArea restrictLibrary(library);
-    campusOperator.run(&restrictLibrary);
-    campusOperator.run(&restrictLibrary);
-
-
-    std::cout
-        << "\nTeam labels:\n";
-
-    std::cout
-        << security.describe()
-        << std::endl;
-
-    std::cout
-        << medical.describe()
-        << std::endl;
-
-    std::cout
-        << communications.describe()
-        << std::endl;
-
-    std::cout
-        << facilities.describe()
-        << std::endl;
-
-
-    std::cout
-        << "\nStates that were built with no context:\n";
-
-    OpenState openNone(nullptr);
-    openNone.updateState();
-
-    RestrictedState restrictedNone(nullptr);
-    restrictedNone.updateState();
-
-    LockedState lockedNone(nullptr);
-    lockedNone.updateState();
-
-    NewState newNone(nullptr);
-    newNone.updateState();
-
-
-    std::cout
-        << "\nClose a NEW incident in an empty shed:\n";
-
-    Building* shed =
-        new Building("Shed");
-
-    Incident drip(
-        "Drip in the shed"
-    );
-
-    shed->addIncident(&drip);
-
-    facade.closeIncident(
-        &drip,
-        shed
-    );
-
-    std::cout
-        << drip.describe()
-        << std::endl;
-
-    delete shed;
-
-
-    std::cout
-        << "\nClose a NEW incident where staff are already on site:\n";
-
-    Incident late(
-        "Late alarm in the library"
-    );
-
-    library->addIncident(&late);
-
-    facade.closeIncident(
-        &late,
-        library
-    );
-
-    std::cout
-        << late.describe()
-        << std::endl;
-
-
-    std::cout
-        << "\n====================================\n"
-        << " FINAL STATUS\n"
-        << "====================================\n";
-
-
-    std::cout
-        << "\nIncident 1: "
-        << fire.describe()
-        << std::endl;
-
-    std::cout
-        << "Incident 2: "
-        << chemicalLeak.describe()
-        << std::endl;
-
-    std::cout
-        << "Incident 3: "
-        << powerCut.describe()
-        << std::endl;
-
-
-    std::cout
-        << "\nEngineering:\n";
-
-    engineering->display();
-
-
-    std::cout
-        << "\nScience:\n";
-
-    science->display();
-
-
-    std::cout
-        << "\nLibrary:\n";
-
-    library->display();
-
-
-    delete engineering;
-    delete science;
-    delete library;
-
-
-    std::cout
-        << "\n====================================\n"
-        << " CampusGuard terminated successfully\n"
-        << "====================================\n";
-
-
-    return 0;
+	return 0;
 }

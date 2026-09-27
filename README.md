@@ -18,9 +18,9 @@ docker compose down
 
 Valgrind and GDB need the tools inside the container. `make` already compiles with `-g`.
 
-```
+```bash
 docker compose run --rm --entrypoint make campusguard valgrind
-docker compose run --rm -it --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --entrypoint gdb campusguard ./campusguard
+docker compose run --rm -it --entrypoint gdb campusguard ./campusguard
 ```
 
 ## Local

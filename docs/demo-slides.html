@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CampusGuard — COS214 Practical 5</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cookie&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Dela+Gothic+One&family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&family=Major+Mono+Display&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Wire+One&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+
+    :root {
+      --cream: #f3e9c4;
+      --cream-2: #ead9a8;
+      --terra: #c63c1e;
+      --terra-dark: #9e2e16;
+      --ink: #2a1812;
+      --muted: #7a5848;
+      --font: "DM Sans", sans-serif;
+      --font-display: "DM Sans", sans-serif;
+      --font-code: "IBM Plex Mono", monospace;
+      --type-xs: clamp(0.65rem, 0.55rem + 0.35vw, 0.85rem);
+      --type-sm: clamp(0.88rem, 0.75rem + 0.5vw, 1.2rem);
+      --type-base: clamp(0.95rem, 0.8rem + 0.55vw, 1.3rem);
+      --type-md: clamp(1rem, 0.85rem + 0.65vw, 1.45rem);
+      --type-lg: clamp(1.15rem, 0.95rem + 0.85vw, 1.8rem);
+      --type-xl: clamp(1.35rem, 1.1rem + 1.1vw, 2.25rem);
+      --type-2xl: clamp(1.6rem, 1.25rem + 1.4vw, 2.75rem);
+      --type-display: clamp(2.4rem, 1.6rem + 3vw, 5.2rem);
+      --type-label: clamp(0.65rem, 0.55rem + 0.3vw, 0.82rem);
+      --gutter: 9.25rem;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; height: 100%; overflow: hidden;
+      background: var(--cream); color: var(--ink);
+      font-family: var(--font);
+      font-size: var(--type-base);
+    }
+    #deck { height: 100%; position: relative; }
+    .slide {
+      display: none;
+      position: absolute;
+      inset: 0;
+      padding: 3.2rem var(--gutter) 4.2rem;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: var(--cream);
+    }
+    .slide.on { display: flex; }
+    .inner {
+      width: 100%;
+      max-width: 920px;
+      max-height: calc(100vh - 7.2rem);
+      overflow: auto;
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-size: var(--type-display);
+      font-weight: 700;
+      margin: 0 0 0.2em;
+      color: var(--terra);
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+    }
+    h2 {
+      font-family: var(--font);
+      font-size: var(--type-xl);
+      font-weight: 700;
+      margin: 0 0 0.4em;
+      color: var(--ink);
+      letter-spacing: -0.03em;
+    }
+    p, li { font-size: var(--type-md); line-height: 1.42; margin: 0.28em 0; }
+    .muted { color: var(--muted); }
+    .kicker {
+      color: var(--terra);
+      font-weight: 650;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: var(--type-label);
+      font-family: var(--font);
+      margin-bottom: 0.55rem;
+    }
+    ul, ol { margin: 0.2em 0 0; padding-left: 1.15em; }
+    li { margin: 0.22em 0; }
+    code, .cmd-block { font-family: var(--font-code); }
+    code {
+      background: none;
+      border: none;
+      padding: 0;
+      border-radius: 0;
+      color: var(--terra-dark);
+      font-size: 0.92em;
+    }
+    .cmd-block {
+      background: none;
+      color: var(--terra-dark);
+      border: none;
+      border-left: 3px solid var(--terra);
+      padding: 0.35rem 0 0.35rem 0.85rem;
+      border-radius: 0;
+      font-size: var(--type-lg);
+      margin: 0.5em 0;
+    }
+    .row { display: flex; gap: 0.9rem; flex-wrap: wrap; align-items: stretch; margin: 0.55rem 0; }
+    .col { flex: 1; min-width: 210px; }
+    .grow { flex: 1.55; min-width: 260px; }
+    .card {
+      background: var(--cream-2);
+      border: none;
+      padding: 0.85rem 1rem;
+      border-radius: 0;
+    }
+    .card strong {
+      display: block;
+      color: var(--terra);
+      font-size: var(--type-sm);
+      margin-bottom: 0.2em;
+    }
+    .card p, .card li { font-size: var(--type-sm); margin: 0.15em 0; }
+    .fig {
+      background: #fff;
+      border: 1px solid rgba(42, 24, 18, 0.12);
+      border-radius: 0;
+      padding: 0.35rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fig img { max-width: 100%; max-height: 56vh; object-fit: contain; }
+    .fig.tall img { max-height: 68vh; }
+    .bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between;
+      padding: 0.55rem var(--gutter);
+      color: var(--muted); font-size: var(--type-xs);
+      font-family: var(--font);
+      pointer-events: none;
+    }
+    .nav {
+      appearance: none;
+      -webkit-appearance: none;
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.75rem;
+      height: 2.75rem;
+      padding: 0;
+      margin: 0;
+      border: 1.5px solid var(--terra);
+      border-radius: 50%;
+      background: var(--cream);
+      color: var(--terra);
+      font-size: 1.55rem;
+      line-height: 1;
+      cursor: pointer;
+      z-index: 20;
+      font-family: var(--font);
+      pointer-events: auto;
+    }
+    .nav:hover:not(:disabled) {
+      background: var(--terra);
+      color: var(--cream);
+    }
+    .nav:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+    .nav-prev { left: 1.6rem; }
+    .nav-next { right: 1.6rem; }
+    body.on-title .nav-next {
+      background: var(--cream);
+      border-color: var(--cream);
+      color: var(--terra);
+    }
+    body.on-title .nav-next:hover:not(:disabled) {
+      background: var(--terra-dark);
+      border-color: var(--terra-dark);
+      color: var(--cream);
+    }
+    table { border-collapse: collapse; width: 100%; font-size: var(--type-sm); }
+    th, td {
+      text-align: left; padding: 0.38rem 0.4rem;
+      border-bottom: 1px solid rgba(42, 24, 18, 0.14); vertical-align: top;
+    }
+    th {
+      color: var(--terra);
+      font-family: var(--font);
+      font-size: var(--type-label);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .flow {
+      font-family: var(--font-code);
+      font-size: var(--type-sm);
+      color: var(--terra-dark);
+      line-height: 1.65;
+    }
+    .why { color: var(--terra); font-weight: 700; }
+
+    .slide.title-slide {
+      padding: 0;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+    .slide.title-slide.on { display: flex; }
+    .split {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      width: 100%;
+      height: 100%;
+    }
+    .split-copy {
+      background: var(--cream);
+      padding: 7vh 3.2rem 8vh var(--gutter);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+    .split-copy .lead { font-size: var(--type-lg); max-width: 18ch; }
+    .split-art {
+      background: var(--terra);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8vh var(--gutter) 8vh 1.8rem;
+    }
+    .forms { width: min(58%, 280px); height: auto; }
+    .forms ellipse { fill: var(--cream); }
+  </style>
+</head>
+<body>
+<div id="deck">
+
+<section class="slide title-slide on">
+  <div class="split">
+    <div class="split-copy">
+      <div class="kicker">Presented by Patrick Simuyemba · Shelby Bodenstein</div>
+      <div>
+        <h1>Campus Guard</h1>
+        <p class="lead">Campus emergency response.</p>
+        <p class="muted">COS214 Practical 5 · Task 6</p>
+      </div>
+    </div>
+    <div class="split-art" aria-hidden="true">
+      <svg class="forms" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="64" rx="92" ry="50" />
+        <ellipse cx="100" cy="140" rx="92" ry="50" />
+        <ellipse cx="100" cy="216" rx="92" ry="50" />
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">System</div>
+    <h2>What CampusGuard does</h2>
+    <p>An incident is logged on a campus area. Staff dispatch a unit, change who may enter, and alert campus until the incident is closed.</p>
+    <div class="row">
+      <div class="col card">
+        <strong>Engineering</strong>
+        <p>Fire in the lab. Rooms: Engineering Lab, Lecture Room 2-1, Server Room.</p>
+      </div>
+      <div class="col card">
+        <strong>Science</strong>
+        <p>Chemical leak. Rooms: Chemistry Lab, Physics Lab.</p>
+      </div>
+    </div>
+    <p class="muted">Four teams: Security, Medical, Facilities, Communications. Alerts go out on a legacy radio.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Roles</div>
+    <h2>Command</h2>
+    <table>
+      <tr><th>Role</th><th>In CampusGuard</th></tr>
+      <tr><td>Invoker</td><td><code>Operator</code></td></tr>
+      <tr><td>Command</td><td><code>Command</code></td></tr>
+      <tr><td>ConcreteCommand</td><td><code>DispatchUnit</code>, <code>IssueAlert</code>, <code>RestrictArea</code>, <code>LockArea</code>, <code>UnlockArea</code></td></tr>
+      <tr><td>Receiver</td><td><code>TeamCoordinator</code>, <code>CampusArea</code>, <code>AlertService</code></td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Roles</div>
+    <h2>Mediator</h2>
+    <table>
+      <tr><th>Role</th><th>In CampusGuard</th></tr>
+      <tr><td>Mediator</td><td><code>Coordinator</code></td></tr>
+      <tr><td>ConcreteMediator</td><td><code>TeamCoordinator</code></td></tr>
+      <tr><td>Colleague</td><td><code>ResponseUnit</code></td></tr>
+      <tr><td>ConcreteColleague</td><td><code>SecurityTeam</code>, <code>MedicalTeam</code>, <code>FacilitiesStaff</code>, <code>CommunicationsTeam</code></td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Roles</div>
+    <h2>Adapter</h2>
+    <table>
+      <tr><th>Role</th><th>In CampusGuard</th></tr>
+      <tr><td>Target</td><td><code>AlertService</code></td></tr>
+      <tr><td>Adapter</td><td><code>AlertServiceAdapter</code></td></tr>
+      <tr><td>Adaptee</td><td><code>LegacyAlertService</code></td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Roles</div>
+    <h2>Facade</h2>
+    <table>
+      <tr><th>Role</th><th>In CampusGuard</th></tr>
+      <tr><td>Facade</td><td><code>CampusGuardFacade</code></td></tr>
+      <tr><td>Operations</td><td><code>reportIncident</code>, <code>mobilise</code>, <code>closeIncident</code></td></tr>
+      <tr><td>Subsystem</td><td><code>Operator</code>, <code>TeamCoordinator</code>, <code>AlertService</code>, <code>Incident</code>, <code>CampusArea</code></td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Roles</div>
+    <h2>State</h2>
+    <table>
+      <tr><th>Role</th><th>In CampusGuard</th></tr>
+      <tr><td>Context</td><td><code>Incident</code>, <code>CampusArea</code></td></tr>
+      <tr><td>State</td><td><code>IncidentState</code>, <code>AccessState</code></td></tr>
+      <tr><td>ConcreteState</td><td><code>NewState</code>, <code>AssignedState</code>, <code>MitigationState</code>, <code>ResolvedState</code></td></tr>
+      <tr><td></td><td><code>OpenState</code>, <code>RestrictedState</code>, <code>LockedState</code></td></tr>
+    </table>
+    <p><strong>Why.</strong> A fire or leak is only allowed to move New → Assigned → Mitigation → Resolved if the current status permits it. Area access is the same: Open / Restricted / Locked. An <code>enum</code> plus <code>switch</code> on <code>Incident</code> or <code>CampusArea</code> would put every transition in one place. The current state object accepts or refuses: New stays New until a unit is on the area; Resolved refuses another <code>progress()</code>; Unlock refuses if the building is already open.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Roles</div>
+    <h2>Composite</h2>
+    <table>
+      <tr><th>Role</th><th>In CampusGuard</th></tr>
+      <tr><td>Component</td><td><code>CampusArea</code></td></tr>
+      <tr><td>Composite</td><td><code>Building</code></td></tr>
+      <tr><td>Leaf</td><td><code>Room</code></td></tr>
+    </table>
+    <p><strong>Why.</strong> Restrict or unlock Engineering and every lab inside it must follow. A room list plus a loop in <code>RestrictArea</code> / <code>LockArea</code> / <code>UnlockArea</code> would copy that walk into every command. <code>Building</code> and <code>Room</code> share <code>CampusArea</code>, so one command on Engineering or Science is forwarded by <code>Building::updateState</code> to its children.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Build</div>
+    <h2>C++11, Makefile, Docker</h2>
+    <p><code>make</code> builds the same binary the container runs. Names are from the domain: <code>CampusArea</code>, <code>DispatchUnit</code>, <code>TeamCoordinator</code>.</p>
+    <div class="cmd-block">docker compose up --build</div>
+    <p class="muted">From the repository root. The log is the fire, then the leak.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Fire</div>
+    <h2>Fire in the Engineering Building</h2>
+    <ol>
+      <li>Fire recorded on Engineering in <code>New</code>. Early <code>progress()</code> stays New — nobody on site.</li>
+      <li><code>DispatchUnit</code> sends Security. The coordinator tells Medical, Facilities and Communications.</li>
+      <li><code>RestrictArea</code> on the building; every room becomes Restricted. <code>IssueAlert</code> hits the radio.</li>
+      <li>Assigned → Mitigation → Resolved. <code>UnlockArea</code> reopens the tree.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Dispatch</div>
+    <h2>From operator to teams</h2>
+    <p><code>Operator.run</code> → <code>DispatchUnit.excute</code> → <code>TeamCoordinator.deploy</code>.</p>
+    <p>Security <code>respond</code>s, then <code>notify</code>. The coordinator calls <code>support</code> on the other units. Security never holds Medical.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Alert</div>
+    <h2>The radio does not speak CampusGuard</h2>
+    <p>We call <code>issueAlert()</code>. The existing box only has <code>sendAlert()</code>.</p>
+    <p class="flow">IssueAlert → AlertService → AlertServiceAdapter → LegacyAlertService.sendAlert</p>
+    <p>The adapter points at a stack object in <code>main</code>. It does not create or own the radio.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Leak</div>
+    <h2>Chemical leak in Science</h2>
+    <p>Different building, different incident. The client uses <code>CampusGuardFacade</code> instead of assembling the steps.</p>
+    <ul>
+      <li><code>reportIncident</code> — log, attach, restrict, alert</li>
+      <li>Mitigate before Medical arrives is refused</li>
+      <li><code>mobilise</code> Medical — dispatch, then Assigned</li>
+      <li>A second lock on an already closed building is refused</li>
+      <li><code>closeIncident</code> — resolve, unlock, all-clear</li>
+    </ul>
+    <p class="muted">The fire already used those same objects without the facade.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Ownership</div>
+    <h2>If you new it, you delete it</h2>
+    <ul>
+      <li><code>main</code> creates buildings and deletes them. <code>Building</code> deletes rooms.</li>
+      <li>Area owns <code>AccessState</code>. Incident owns <code>IncidentState</code>.</li>
+      <li>Area does not own incidents. Operator does not own commands. Adapter does not own the radio.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">GDB</div>
+    <h2>Two bugs we actually hit</h2>
+    <p><code>NewState::updateState</code> — first <code>fire.progress()</code> had nobody on site; it now stays New.</p>
+    <p><code>Operator::run</code> — a null <code>Command*</code> is rejected instead of calling <code>excute()</code> on <code>0x0</code>.</p>
+    <div class="cmd-block" style="font-size: var(--type-sm);">docker compose run --rm -it --entrypoint gdb campusguard ./campusguard</div>
+    <div class="cmd-block" style="font-size: var(--type-sm);">docker compose run --rm --entrypoint make campusguard valgrind</div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">Team</div>
+    <h2>How the work was split</h2>
+    <ul>
+      <li><strong>Patrick Simuyemba</strong> — repo, UML write-up, Docker/Makefile, incident–area coupling, state guards.</li>
+      <li><strong>Shelby Bodenstein</strong> — C++ model and <code>main</code>, first Dockerfile and Compose service.</li>
+    </ul>
+    <p class="muted">github.com/patrickkaleo/COS214_P5</p>
+  </div>
+</section>
+
+<section class="slide title-slide">
+  <div class="split">
+    <div class="split-copy">
+      <div class="kicker">End</div>
+      <div>
+        <h1>Questions</h1>
+        <p class="lead"><code>docker compose down</code></p>
+      </div>
+    </div>
+    <div class="split-art" aria-hidden="true">
+      <svg class="forms" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="64" rx="92" ry="50" />
+        <ellipse cx="100" cy="140" rx="92" ry="50" />
+        <ellipse cx="100" cy="216" rx="92" ry="50" />
+      </svg>
+    </div>
+  </div>
+</section>
+
+</div>
+<button class="nav nav-prev" id="prev" type="button" aria-label="Previous slide">‹</button>
+<button class="nav nav-next" id="next" type="button" aria-label="Next slide">›</button>
+<div class="bar">
+  <span>CampusGuard · Practical 5</span>
+  <span id="pos">1</span>
+</div>
+<script>
+  const slides = [...document.querySelectorAll(".slide")];
+  const prevBtn = document.getElementById("prev");
+  const nextBtn = document.getElementById("next");
+  let i = 0;
+  function show(n) {
+    i = Math.max(0, Math.min(n, slides.length - 1));
+    slides.forEach((s, k) => s.classList.toggle("on", k === i));
+    document.body.classList.toggle("on-title", slides[i].classList.contains("title-slide"));
+    document.getElementById("pos").textContent = (i + 1) + " / " + slides.length;
+    prevBtn.disabled = i === 0;
+    nextBtn.disabled = i === slides.length - 1;
+  }
+  prevBtn.addEventListener("click", (e) => { e.stopPropagation(); show(i - 1); });
+  nextBtn.addEventListener("click", (e) => { e.stopPropagation(); show(i + 1); });
+  document.body.addEventListener("keydown", (e) => {
+    if (["ArrowRight", " ", "PageDown"].includes(e.key)) { e.preventDefault(); show(i + 1); }
+    if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); show(i - 1); }
+  });
+  show(0);
+</script>
+</body>
+</html>
